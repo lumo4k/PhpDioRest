@@ -1,11 +1,26 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Teste</h1>
-</body>
-</html>
+<?php  
+
+require __DIR__ . "/Config/config.php";
+
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$uri = explode('/', $uri);
+
+if ((isset($uri[1]) && $uri[1] != 'api') || isset($uri[2]) && $uri[2] != 'v1') {
+    header("HTTP/1.1 404 Not Found");
+    exit;
+}
+
+if ((isset($uri[3]) && $uri[3] != 'api') || !isset($uri[4]) ) {
+    header("HTTP/1.1 404 Not Found");
+    exit;
+}
+
+require ROOT_PATH . "/Controller/API/UserController.php";
+
+$user = new UserController();
+
+$methodName = $uri[4] . 'Action';
+
+$user->{$methodName}();
+
+?>
